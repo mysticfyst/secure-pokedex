@@ -1,4 +1,4 @@
-package pojo;
+package com.pokedex.pojo;
 
 import annotations.EncryptedField;
 import lombok.Getter;

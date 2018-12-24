@@ -1,4 +1,4 @@
-package utility;
+package com.pokedex.utility;
 
 public class CommonUtil {
 

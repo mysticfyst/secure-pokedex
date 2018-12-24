@@ -1,12 +1,16 @@
-package pojo;
+package com.pokedex.pojo;
 
 import annotations.EncryptedField;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class Badge {
+
+  private int id;
 
   private String cityName;
 

@@ -44,16 +44,16 @@ public class AnnotationProcessor extends AbstractProcessor {
 
         List<Element> validFields = new ArrayList<>(annotatedElements);
 
-        Map<String, List<String>> classToFieldsMap = new HashMap<>();
+        Map<String, List<Element>> classToFieldsMap = new HashMap<>();
         validFields.forEach(field -> {
           String className =
               ((TypeElement) field.getEnclosingElement()).getQualifiedName().toString();
           if (classToFieldsMap.get(className) == null) {
-            List<String> fields = new ArrayList<>();
-            fields.add(field.getSimpleName().toString());
+            List<Element> fields = new ArrayList<>();
+            fields.add(field);
             classToFieldsMap.put(className, fields);
           } else {
-            classToFieldsMap.get(className).add(field.getSimpleName().toString());
+            classToFieldsMap.get(className).add(field);
           }
         });
 
@@ -65,7 +65,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     return true;
   }
 
-  private void writeBuilderFile(Map<String, List<String>> classToFieldsMap) {
+  private void writeBuilderFile(Map<String, List<Element>> classToFieldsMap) {
     try {
 
       String encrypterClassName = "Encrypter";
@@ -73,9 +73,13 @@ public class AnnotationProcessor extends AbstractProcessor {
       JavaFileObject builderFile = processingEnv.getFiler().createSourceFile(encrypterClassName);
       try (PrintWriter out = new PrintWriter(builderFile.openWriter())) {
 
+        // Hardcoding package for now
+        out.println("package com.pokedex.pojo;");
+        out.println();
+
         // Adding a static import
         // TODO: Maybe autogenerate this based on the functions used?
-        out.println("import utility.CommonUtil;");
+        out.println("import com.pokedex.utility.CommonUtil;");
         out.println();
 
         out.print("public class ");
@@ -84,11 +88,6 @@ public class AnnotationProcessor extends AbstractProcessor {
         out.println();
 
         classToFieldsMap.forEach((className, fields) -> {
-          // Add comments for the encrypter function
-          out.println("\t/** ");
-          out.println("\t * Fields to be encrypted: " + fields.toString());
-          out.println("\t */");
-
           addMethodForEncryption(className, fields, out);
         });
 
@@ -100,15 +99,21 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
   }
 
-  public void addMethodForEncryption(String className, List<String> fields, PrintWriter out) {
+  public void addMethodForEncryption(String className, List<Element> fields, PrintWriter out) {
+    // Add comments for the encrypter function
+    out.println("\t/** ");
+    out.println("\t * Fields to be encrypted: " + fields.toString());
+    out.println("\t */");
+
+    // Add the method of encryption
     out.print("\tpublic static ");
     out.print(className);
     out.print(" encryptObject(");
     out.print(className);
     out.println(" objectToBeEncrypted) {");
     out.println();
-    for (String fieldName : fields) {
-      encryptField("objectToBeEncrypted", fieldName, 2, out);
+    for (Element field : fields) {
+      encryptField("objectToBeEncrypted", field.getSimpleName().toString(), 2, out);
     }
     out.println("\t\treturn objectToBeEncrypted;");
     out.println("\t}");
@@ -125,6 +130,22 @@ public class AnnotationProcessor extends AbstractProcessor {
     addTabs(tabs, out);
     out.println(stringBuilder.toString());
     out.println();
+  }
+
+  public void decryptField(String objectName, String fieldName, int tabs, PrintWriter out) {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append(objectName).append(".").append(getSetterName(fieldName)).append("(")
+        .append("CommonUtil.decrypt(").append(objectName).append(".")
+        .append(getGetterName(fieldName)).append("()").append(")").append(")").append(";");
+    addTabs(tabs, out);
+    out.println("// Decrypting " + fieldName);
+    addTabs(tabs, out);
+    out.println(stringBuilder.toString());
+    out.println();
+  }
+
+  private String getFieldType(Element element) {
+    return (element.asType()).toString();
   }
 
   public String getSetterName(String fieldName) {
