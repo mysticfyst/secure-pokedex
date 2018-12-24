@@ -1,0 +1,4 @@
+processor/AnnotationProcessor.class
+processor/AnnotationProcessor$FieldType.class
+META-INF/services/javax.annotation.processing.Processor
+annotations/EncryptedField.class
