@@ -1,2 +1,23 @@
+logs/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+## Idea
+# Directory-based project format:
+.idea/
+# File-based project format:
+*.ipr
+*.iws
 *.iml
-./idea/*
+
+target/maven-archiver/*
+target/maven-status/*
+
+*.jar
+*.war
+*.ear

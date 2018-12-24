@@ -16,22 +16,22 @@ public class Encrypter {
 		return objectToBeEncrypted;
 	}
 	/** 
-	 * Fields to be encrypted: [gymTrainerSpeciality]
-	 */
-	public static pojo.Badge encryptObject(pojo.Badge objectToBeEncrypted) {
-
-		// Encrypting gymTrainerSpeciality
-		objectToBeEncrypted.setGymTrainerSpeciality(CommonUtil.encrypt(objectToBeEncrypted.getGymTrainerSpeciality()));
-
-		return objectToBeEncrypted;
-	}
-	/** 
 	 * Fields to be encrypted: [name]
 	 */
 	public static pojo.Pokemon encryptObject(pojo.Pokemon objectToBeEncrypted) {
 
 		// Encrypting name
 		objectToBeEncrypted.setName(CommonUtil.encrypt(objectToBeEncrypted.getName()));
+
+		return objectToBeEncrypted;
+	}
+	/** 
+	 * Fields to be encrypted: [gymTrainerSpeciality]
+	 */
+	public static pojo.Badge encryptObject(pojo.Badge objectToBeEncrypted) {
+
+		// Encrypting gymTrainerSpeciality
+		objectToBeEncrypted.setGymTrainerSpeciality(CommonUtil.encrypt(objectToBeEncrypted.getGymTrainerSpeciality()));
 
 		return objectToBeEncrypted;
 	}
