@@ -1,6 +1,5 @@
 import pojo.Pokemon;
 import pojo.Trainer;
-import pojo.TrainerEncrypter;
 
 import java.util.Arrays;
 
@@ -11,7 +10,7 @@ public class Application {
     Pokemon snorlax = new Pokemon(2, "Snorlax", 9);
     Trainer red = new Trainer("tr001", "Red", charmander ,Arrays.asList(charmander,
         snorlax), null, null);
-    TrainerEncrypter.encryptObject(red);
+    Encrypter.encryptObject(red);
     System.out.println();
   }
 }

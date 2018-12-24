@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/annotation-processor/annotation-processor.iml" filepath="$PROJECT_DIR$/annotation-processor/annotation-processor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pokedex/pokedex.iml" filepath="$PROJECT_DIR$/pokedex/pokedex.iml" />
+      <module fileurl="file://$PROJECT_DIR$/secure-pokedex.iml" filepath="$PROJECT_DIR$/secure-pokedex.iml" />
+    </modules>
+  </component>
+</project>

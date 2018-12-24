@@ -57,7 +57,7 @@ public class AnnotationProcessor extends AbstractProcessor {
           }
         });
 
-        classToFieldsMap.forEach((className, fields) -> writeBuilderFile(className, fields));
+        writeBuilderFile(classToFieldsMap);
 
       }
     }
@@ -65,28 +65,13 @@ public class AnnotationProcessor extends AbstractProcessor {
     return true;
   }
 
-  private void writeBuilderFile(String className, List<String> fields) {
+  private void writeBuilderFile(Map<String, List<String>> classToFieldsMap) {
     try {
 
-      String packageName = null;
-      int lastDot = className.lastIndexOf('.');
-      if (lastDot > 0) {
-        packageName = className.substring(0, lastDot);
-      }
+      String encrypterClassName = "Encrypter";
 
-      String simpleClassName = className.substring(lastDot + 1);
-      String builderClassName = className + "Encrypter";
-      String builderSimpleClassName = builderClassName.substring(lastDot + 1);
-
-      JavaFileObject builderFile = processingEnv.getFiler().createSourceFile(builderClassName);
+      JavaFileObject builderFile = processingEnv.getFiler().createSourceFile(encrypterClassName);
       try (PrintWriter out = new PrintWriter(builderFile.openWriter())) {
-
-        if (packageName != null) {
-          out.print("package ");
-          out.print(packageName);
-          out.println(";");
-          out.println();
-        }
 
         // Adding a static import
         // TODO: Maybe autogenerate this based on the functions used?
@@ -94,25 +79,18 @@ public class AnnotationProcessor extends AbstractProcessor {
         out.println();
 
         out.print("public class ");
-        out.print(builderSimpleClassName);
+        out.print(encrypterClassName);
         out.println(" {");
         out.println();
 
-        out.println("\t/** ");
-        out.println("\t * Fields to be encrypted: " + fields.toString());
-        out.println("\t */");
+        classToFieldsMap.forEach((className, fields) -> {
+          // Add comments for the encrypter function
+          out.println("\t/** ");
+          out.println("\t * Fields to be encrypted: " + fields.toString());
+          out.println("\t */");
 
-        out.print("\tpublic static ");
-        out.print(simpleClassName);
-        out.print(" encryptObject(");
-        out.print(simpleClassName);
-        out.println(" objectToBeEncrypted) {");
-        out.println();
-        for (String fieldName : fields) {
-          encryptField("objectToBeEncrypted", fieldName, 2, out);
-        }
-        out.println("\t\treturn objectToBeEncrypted;");
-        out.println("\t}");
+          addMethodForEncryption(className, fields, out);
+        });
 
         out.println("}");
 
@@ -121,6 +99,21 @@ public class AnnotationProcessor extends AbstractProcessor {
       e.printStackTrace();
     }
   }
+
+  public void addMethodForEncryption(String className, List<String> fields, PrintWriter out) {
+    out.print("\tpublic static ");
+    out.print(className);
+    out.print(" encryptObject(");
+    out.print(className);
+    out.println(" objectToBeEncrypted) {");
+    out.println();
+    for (String fieldName : fields) {
+      encryptField("objectToBeEncrypted", fieldName, 2, out);
+    }
+    out.println("\t\treturn objectToBeEncrypted;");
+    out.println("\t}");
+  }
+
 
   public void encryptField(String objectName, String fieldName, int tabs, PrintWriter out) {
     StringBuilder stringBuilder = new StringBuilder();
